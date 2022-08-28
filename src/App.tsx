@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect }  from 'react';
+import { drawClock } from './clock';
+
 import './App.css';
 
 function App() {
+
+  useEffect(() => {
+    const canvas  = document.getElementById("canvas") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d");
+    let radius = canvas.width / 2;
+    ctx.translate(radius / 2, radius / 2);
+    radius = radius * 0.90
+    const clear = () => ctx.clearRect(-radius, -radius, canvas.width, canvas.height);
+    setInterval(drawClock(ctx, radius, clear), 1000);
+  }, []);
+  
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <main className="App-header">
+        <div>
+          <p>Current time:</p>
+          <canvas id="canvas" width="600" height="1000"
+            style={{backgroundColor: 'transparent'}}>
+          </canvas>
+        </div>
+      </main>
     </div>
   );
 }
