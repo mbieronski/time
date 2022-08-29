@@ -158,7 +158,7 @@ function drawMinuteNumbers(ctx: CanvasRenderingContext2D, radius) {
     ctx.rotate(-ang);
     if (num % 3) {
       ctx.beginPath();
-      ctx.arc(0, 0, 2, 0, 2 * Math.PI);
+      ctx.arc(0, 0, radius * 0.01, 0, 2 * Math.PI);
       ctx.fill();
       ctx.closePath();
     } else {

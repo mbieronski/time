@@ -48,7 +48,7 @@ function App() {
   return (
     <div className="App">
       <main className="App-header">
-        <div>
+        <div style={{ width: '100%' }}>
           <p>
             Current time:{' '}
             {`${time28.hour}:${padStart(
@@ -59,7 +59,7 @@ function App() {
           </p>
           <canvas
             id="canvas"
-            width="600"
+            width={Math.min(document.body.clientWidth, 600)}
             height="1000"
             style={{ backgroundColor: 'transparent' }}
           ></canvas>
