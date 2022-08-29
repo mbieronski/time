@@ -31,14 +31,19 @@ function App() {
     }, 1000);
 
     if (!position && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((pos) =>
-        setPosition(
-          SunCalc.getTimes(
-            TIME || new Date(),
-            pos.coords.latitude,
-            pos.coords.longitude,
+      navigator.geolocation.getCurrentPosition(
+        (pos) =>
+          setPosition(
+            SunCalc.getTimes(
+              TIME || new Date(),
+              pos.coords.latitude,
+              pos.coords.longitude,
+            ),
           ),
-        ),
+        () =>
+          alert(
+            'Enable Location services for your browser to get additional features',
+          ),
       );
     }
 

@@ -56,28 +56,24 @@ function drawLightMap(
   );
   // console.log(sunTimes);
   // let continues = false;
-  // if (endAngle % (2 * Math.PI) > Math.PI / 4) {
-  //   endAngle = 0;
-  //   continues = true;
-  // }
+  if ((endAngle - Math.PI / 4) % (2 * Math.PI) > Math.PI / 4) {
+    endAngle = 0;
+    // continues = true;
+  }
 
-  console.log(
-    toTime28(sunTimes.sunset),
-    toTime28(moment(sunTimes.sunrise).add(1, 'day').toDate()),
-  );
-  const gradient = ctx.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
+  const gradient = ctx.createRadialGradient(0, 0, radius * 0.25, 0, 0, radius);
   gradient.addColorStop(0, 'transparent');
   gradient.addColorStop(1, '#191130');
   ctx.fillStyle = gradient;
 
   // const duskGradient = ctx.createLinearGradient(
-  //   0,
   //   -radius,
-  //   Math.cos(startAngle + 0.2 - Math.PI / 2) * radius,
-  //   Math.sin(startAngle + 0.2 - Math.PI / 2) * radius,
+  //   -radius,
+  //   Math.cos(startAngle) * radius * 2,
+  //   Math.sin(startAngle) * radius * 2,
   // );
   // duskGradient.addColorStop(0.501, 'transparent');
-  // duskGradient.addColorStop(0.5, 'rgba(50,50,100,0.6)');
+  // duskGradient.addColorStop(0.5, 'orange'); //'rgba(50,50,100,0.6)'
   // duskGradient.addColorStop(0.4, 'transparent');
 
   // const dawnGradient = ctx.createLinearGradient(
@@ -86,9 +82,9 @@ function drawLightMap(
   //   Math.cos(endAngle + 0.2 - Math.PI / 2) * radius,
   //   Math.sin(endAngle + 0.2 - Math.PI / 2) * radius,
   // );
-  // duskGradient.addColorStop(0.501, 'transparent');
-  // duskGradient.addColorStop(0.5, 'rgba(50,50,100,0.6)');
-  // duskGradient.addColorStop(0.4, 'transparent');
+  // dawnGradient.addColorStop(0.501, 'transparent');
+  // dawnGradient.addColorStop(0.5, 'rgba(50,50,100,0.6)');
+  // dawnGradient.addColorStop(0.4, 'transparent');
 
   ctx.beginPath();
   ctx.rotate(Math.PI / -2);
@@ -97,16 +93,16 @@ function drawLightMap(
   ctx.fill();
   ctx.rotate(Math.PI / 2);
 
-  ctx.moveTo(0, 0);
+  // ctx.moveTo(0, 0);
 
-  //   ctx.fillStyle = continues ? duskGradient : dawnGradient;
+  // ctx.fillStyle = duskGradient;
 
-  //   ctx.beginPath();
-  //   ctx.rotate(Math.PI / -2);
-  //   ctx.moveTo(0, 0);
-  //   ctx.arc(0, 0, radius, startAngle - 0.2, startAngle + 0.2);
-  //   ctx.fill();
-  //   ctx.rotate(Math.PI / 2);
+  // ctx.beginPath();
+  // ctx.rotate(Math.PI / -2);
+  // ctx.moveTo(0, 0);
+  // ctx.arc(0, 0, radius, startAngle - 0.2, startAngle + 0.2);
+  // ctx.fill();
+  // ctx.rotate(Math.PI / 2);
 }
 
 function drawFace(ctx: CanvasRenderingContext2D, radius: number) {
