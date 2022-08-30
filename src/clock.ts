@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { GetTimesResult } from 'suncalc';
-import { NUM_CLOCKFACE_HOURS } from './constants';
+import { NUM_CLOCKFACE_HOURS, TIME } from './constants';
 import { getHourRad } from './utils/clockUtils';
 import { toTime28 } from './utils/toTime28';
 
@@ -50,15 +50,38 @@ function drawLightMap(
   radius: number,
   sunTimes: GetTimesResult,
 ) {
-  const startAngle = getHourRad(toTime28(sunTimes.sunset));
-  let endAngle = getHourRad(
-    toTime28(moment(sunTimes.sunrise).add(1, 'day').toDate()),
-  );
-  // console.log(sunTimes);
-  // let continues = false;
-  if ((endAngle - Math.PI / 4) % (2 * Math.PI) > Math.PI / 4) {
+  const time28 = toTime28();
+  const firstFace = time28.hour < NUM_CLOCKFACE_HOURS;
+
+  const now24 = moment(TIME || new Date());
+  const sunset =
+    now24.isAfter(sunTimes.sunset) &&
+    now24.day() !== moment(sunTimes.sunset).day()
+      ? moment(sunTimes.sunset).add(1, 'day').toDate()
+      : now24.isBefore(sunTimes.sunrise)
+      ? moment(sunTimes.sunset).subtract(1, 'day').toDate()
+      : sunTimes.sunset;
+
+  const sunrise = moment(TIME || new Date()).isAfter(sunTimes.sunrise)
+    ? moment(sunTimes.sunrise).add(1, 'day').toDate()
+    : sunTimes.sunrise;
+
+  const hourAngle = getHourRad(time28);
+
+  const sunrise28 = toTime28(sunrise);
+  const sunset28 = toTime28(sunset);
+  const startTime28 = moment(sunrise).isBefore(sunset) ? sunrise28 : sunset28;
+  const endTime28 = moment(sunrise).isBefore(sunset) ? sunset28 : sunrise28;
+
+  let startAngle = getHourRad(startTime28);
+  let endAngle = getHourRad(endTime28);
+
+  if (startAngle > hourAngle && startTime28.hour > (firstFace ? 0 : 14)) {
+    startAngle = 0;
+  }
+
+  if (endAngle < hourAngle && endTime28.hour > (firstFace ? 0 : 14)) {
     endAngle = 0;
-    // continues = true;
   }
 
   const gradient = ctx.createRadialGradient(0, 0, radius * 0.25, 0, 0, radius);

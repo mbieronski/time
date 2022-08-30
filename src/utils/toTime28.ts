@@ -7,7 +7,7 @@ export type Time28 = {
   second: number; // 0 - 59
 };
 
-export function toTime28(date = TIME || new Date()): Time28 {
+export function toTime28(date: Date = TIME || new Date()): Time28 {
   const day = date.getDay();
   const hr = date.getHours();
   let sixDay: number;
