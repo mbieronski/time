@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { GetTimesResult } from 'suncalc';
-import { NUM_CLOCKFACE_HOURS, TIME } from './constants';
+import { BACKGROUND_COLOR, NUM_CLOCKFACE_HOURS, TIME } from './constants';
 import { getHourRad } from './utils/clockUtils';
 import { toTime28 } from './utils/toTime28';
 
@@ -51,81 +51,124 @@ function drawLightMap(
   sunTimes: GetTimesResult,
 ) {
   const time28 = toTime28();
-  const firstFace = time28.hour < NUM_CLOCKFACE_HOURS;
+  const now = moment(TIME || new Date());
 
-  const now24 = moment(TIME || new Date());
-  const sunset =
-    now24.isAfter(sunTimes.sunset) &&
-    now24.day() !== moment(sunTimes.sunset).day()
-      ? moment(sunTimes.sunset).add(1, 'day').toDate()
-      : now24.isBefore(sunTimes.sunrise)
-      ? moment(sunTimes.sunset).subtract(1, 'day').toDate()
-      : sunTimes.sunset;
+  const sunrise = moment(sunTimes.sunrise);
+  const sunset = moment(sunTimes.sunset);
+  const sunrise28 = toTime28(sunrise.toDate());
+  const sunset28 = toTime28(sunset.toDate());
 
-  const sunrise = moment(TIME || new Date()).isAfter(sunTimes.sunrise)
-    ? moment(sunTimes.sunrise).add(1, 'day').toDate()
-    : sunTimes.sunrise;
-
-  const hourAngle = getHourRad(time28);
-
-  const sunrise28 = toTime28(sunrise);
-  const sunset28 = toTime28(sunset);
-  const startTime28 = moment(sunrise).isBefore(sunset) ? sunrise28 : sunset28;
-  const endTime28 = moment(sunrise).isBefore(sunset) ? sunset28 : sunrise28;
-
-  let startAngle = getHourRad(startTime28);
-  let endAngle = getHourRad(endTime28);
-
-  if (startAngle > hourAngle && startTime28.hour > (firstFace ? 0 : 14)) {
+  let startAngle = getHourRad(sunrise28);
+  let endAngle = getHourRad(sunset28);
+  if (sunrise.isBefore(now) && sunrise28.face !== time28.face) {
+    // prev face
+    console.log('1');
+    startAngle =
+      sunset.isAfter(now) || sunset28.face === time28.face ? endAngle : 0;
+    const nextSunrise = toTime28(sunrise.add(1, 'days').toDate());
+    endAngle = getHourRad(nextSunrise.face === time28.face ? nextSunrise : 0);
+  } else if (sunrise.isAfter(now) && sunrise28.face !== time28.face) {
+    // next face
+    console.log('2');
+    startAngle = getHourRad(toTime28(sunset.subtract(1, 'days').toDate()));
+    endAngle = 0;
+  } else if (sunset.isBefore(now) && sunset28.face !== time28.face) {
+    // prev face
+    console.log('3'); //'2022-09-05T21:00:00.000' else/if
+    startAngle = getHourRad(toTime28(sunrise.add(1, 'days').toDate()));
+    endAngle = getHourRad(toTime28(sunset.add(1, 'days').toDate()));
+  } else if (sunset.isAfter(now) && sunset28.face !== time28.face) {
+    // next face
     startAngle = 0;
+    endAngle = getHourRad(sunrise28);
+    console.log('4');
   }
 
-  if (endAngle < hourAngle && endTime28.hour > (firstFace ? 0 : 14)) {
-    endAngle = 0;
+  if (sunrise28.face === sunset28.face && sunrise28.face === time28.face) {
+    // 0 to sunrise, sunset to 0
+    console.log('5');
+    startAngle = getHourRad(sunset28);
+    endAngle = 0; // toTime28(sunrise.add(1, 'days').toDate());
   }
 
   const gradient = ctx.createRadialGradient(0, 0, radius * 0.25, 0, 0, radius);
-  gradient.addColorStop(0, 'transparent');
+  gradient.addColorStop(0.4, 'transparent');
   gradient.addColorStop(1, '#191130');
+
+  const reverseGradient = ctx.createRadialGradient(
+    0,
+    0,
+    radius * 0.2,
+    0,
+    0,
+    radius,
+  );
+  reverseGradient.addColorStop(0.45, BACKGROUND_COLOR);
+  reverseGradient.addColorStop(0.45001, 'transparent');
+
+  const duskGradient = ctx.createLinearGradient(
+    -radius,
+    -radius,
+    radius,
+    radius,
+  );
+  duskGradient.addColorStop(0.501, 'transparent');
+  duskGradient.addColorStop(0.5, 'rgba(50,50,100,0.6)');
+  duskGradient.addColorStop(0.4, 'transparent');
+
+  const dawnGradient = ctx.createLinearGradient(
+    -radius,
+    -radius,
+    radius,
+    radius,
+  );
+  dawnGradient.addColorStop(0.501, 'transparent');
+  dawnGradient.addColorStop(0.5, 'rgba(0,95,150,0.3)');
+  dawnGradient.addColorStop(0.4, 'transparent');
+
   ctx.fillStyle = gradient;
-
-  // const duskGradient = ctx.createLinearGradient(
-  //   -radius,
-  //   -radius,
-  //   Math.cos(startAngle) * radius * 2,
-  //   Math.sin(startAngle) * radius * 2,
-  // );
-  // duskGradient.addColorStop(0.501, 'transparent');
-  // duskGradient.addColorStop(0.5, 'orange'); //'rgba(50,50,100,0.6)'
-  // duskGradient.addColorStop(0.4, 'transparent');
-
-  // const dawnGradient = ctx.createLinearGradient(
-  //   0,
-  //   -radius,
-  //   Math.cos(endAngle + 0.2 - Math.PI / 2) * radius,
-  //   Math.sin(endAngle + 0.2 - Math.PI / 2) * radius,
-  // );
-  // dawnGradient.addColorStop(0.501, 'transparent');
-  // dawnGradient.addColorStop(0.5, 'rgba(50,50,100,0.6)');
-  // dawnGradient.addColorStop(0.4, 'transparent');
-
   ctx.beginPath();
-  ctx.rotate(Math.PI / -2);
   ctx.moveTo(0, 0);
+  ctx.rotate(Math.PI / -2);
   ctx.arc(0, 0, radius, startAngle, endAngle);
   ctx.fill();
   ctx.rotate(Math.PI / 2);
 
-  // ctx.moveTo(0, 0);
+  // dusk arc
+  if (startAngle !== 0) {
+    ctx.moveTo(0, 0);
 
-  // ctx.fillStyle = duskGradient;
+    ctx.fillStyle = duskGradient;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.rotate(startAngle + (3 * Math.PI) / 4);
+    // ctx.fillRect(-radius, -radius, 2 * radius, 2 * radius);
+    ctx.arc(0, 0, radius, (3 * Math.PI) / 4 - 0.2, (3 * Math.PI) / 4 + 0.2);
+    ctx.fill();
+    ctx.rotate(-startAngle - (3 * Math.PI) / 4);
+  }
 
-  // ctx.beginPath();
-  // ctx.rotate(Math.PI / -2);
-  // ctx.moveTo(0, 0);
-  // ctx.arc(0, 0, radius, startAngle - 0.2, startAngle + 0.2);
-  // ctx.fill();
-  // ctx.rotate(Math.PI / 2);
+  // dawn arc
+  if (endAngle !== 0) {
+    ctx.moveTo(0, 0);
+
+    ctx.fillStyle = dawnGradient;
+    ctx.beginPath();
+    ctx.rotate(endAngle - Math.PI / 4);
+    ctx.moveTo(0, 0);
+    // ctx.fillRect(-radius, -radius, 2 * radius, 2 * radius);
+    ctx.arc(0, 0, radius, -Math.PI / 4 - 0.2, -Math.PI / 4 + 0.2);
+    ctx.fill();
+    ctx.rotate(-endAngle + Math.PI / 4);
+  }
+
+  ctx.fillStyle = reverseGradient;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.rotate(Math.PI / -2);
+  ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.rotate(Math.PI / 2);
 }
 
 function drawFace(ctx: CanvasRenderingContext2D, radius: number) {

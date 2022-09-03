@@ -1,7 +1,9 @@
 import { NUM_CLOCKFACE_HOURS } from '../constants';
 import { Time28 } from './toTime28';
 
-export const getHourRad = (time: Time28) => {
+export const getHourRad = (time: Time28 | 0) => {
+  if (time === 0) return 0;
+
   const { hour, minute, second } = time;
 
   return (
