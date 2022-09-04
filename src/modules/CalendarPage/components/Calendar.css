@@ -1,0 +1,93 @@
+.calendar {
+  display: grid;
+  /* grid-gap: 1em; */
+  margin: 10px;
+  border: 1px solid white;
+  height: 70vh;
+  overflow-y: scroll;
+  gap: 0;
+
+  grid-template-rows:
+  /* [tracks] auto */
+  [time-000] 1fr
+  [time-030] 1fr
+  [time-100] 1fr
+  [time-130] 1fr
+  [time-200] 1fr
+  [time-230] 1fr
+  [time-300] 1fr
+  [time-330] 1fr
+  [time-400] 1fr
+  [time-430] 1fr
+  [time-500] 1fr
+  [time-530] 1fr
+  [time-600] 1fr
+  [time-630] 1fr
+  [time-700] 1fr
+  [time-730] 1fr
+  [time-800] 1fr
+  [time-830] 1fr
+  [time-900] 1fr
+  [time-930] 1fr
+  [time-1000] 1fr
+  [time-1030] 1fr
+  [time-1100] 1fr
+  [time-1130] 1fr
+  [time-1200] 1fr
+  [time-1230] 1fr
+  [time-1300] 1fr
+  [time-1330] 1fr
+  [time-1400] 1fr
+  [time-1430] 1fr
+  [time-1500] 1fr
+  [time-1530] 1fr
+  [time-1600] 1fr
+  [time-1630] 1fr
+  [time-1700] 1fr
+  [time-1730] 1fr
+  [time-1800] 1fr
+  [time-1830] 1fr
+  [time-1900] 1fr
+  [time-1930] 1fr
+  [time-2000] 1fr
+  [time-2030] 1fr
+  [time-2100] 1fr
+  [time-2130] 1fr
+  [time-2200] 1fr
+  [time-2230] 1fr
+  [time-2300] 1fr
+  [time-2330] 1fr
+  [time-2400] 1fr
+  [time-2430] 1fr
+  [time-2500] 1fr
+  [time-2530] 1fr
+  [time-2600] 1fr
+  [time-2630] 1fr
+  [time-2700] 1fr
+  [time-2730] 1fr;
+
+  grid-template-columns:
+  [times] 1fr
+  [day-0] 1fr
+  [day-1] 1fr
+  [day-2] 1fr
+  [day-3] 1fr
+  [day-4] 1fr
+  [day-5] 1fr;
+}
+
+[class*="cell-"] {
+  border: 1px solid white;
+  min-width: 20vh;
+  min-height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell-time-slot {
+  grid-column: times;
+}
+
+.cell-slot {
+}

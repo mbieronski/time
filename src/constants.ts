@@ -1,7 +1,7 @@
 // clock
 export const NUM_CLOCKFACE_HOURS = 14;
 
-export const BACKGROUND_COLOR = '#282c34'; // also need to change App.css
+export const BACKGROUND_COLOR = '#011f1e'; // also need to change App.css
 
 export const TIME = null; //new Date('2022-09-08T05:00:00.000');
 

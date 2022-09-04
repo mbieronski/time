@@ -1,3 +1,4 @@
+import padStart from 'lodash/padStart';
 import { TIME } from '../constants';
 
 export type Time28 = {
@@ -6,6 +7,7 @@ export type Time28 = {
   minute: number; // 0 - 59
   second: number; // 0 - 59
   face: 1 | 2;
+  formatted: string;
 };
 
 export function toTime28(date: Date = TIME || new Date()): Time28 {
@@ -34,5 +36,10 @@ export function toTime28(date: Date = TIME || new Date()): Time28 {
     minute: date.getMinutes(),
     second: date.getSeconds(),
     face: sixHour < 14 ? 1 : 2,
+    formatted: `${sixHour}:${padStart(
+      String(date.getMinutes()),
+      2,
+      '0',
+    )}:${padStart(String(date.getSeconds()), 2, '0')}`,
   };
 }

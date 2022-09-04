@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SunCalc, { GetTimesResult } from 'suncalc';
-import padStart from 'lodash/padStart';
+import { Link } from 'react-router-dom';
 
 import './App.css';
 import { drawClock } from './clock';
@@ -25,6 +25,7 @@ function App() {
 
     const draw = drawClock(ctx, radius, clear, position);
 
+    draw();
     const interval = setInterval(() => {
       setTime28(toTime28(new Date()));
       draw();
@@ -51,21 +52,32 @@ function App() {
   }, [position]);
 
   return (
-    <div className="App">
-      <main className="App-header">
-        <div style={{ width: '100%' }}>
-          <p>
-            Current time:{' '}
-            {`${time28.hour}:${padStart(
-              String(time28.minute),
-              2,
-              '0',
-            )}:${padStart(String(time28.second), 2, '0')}`}
-          </p>
+    <div>
+      <main className="App">
+        <div style={{ width: '100%', marginTop: '15px' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifySelf: 'space-between',
+            }}
+          >
+            <div style={{ flex: 1 }} />
+            <span style={{ flex: 1 }}>{time28.formatted}</span>
+            <span style={{ flex: 1 }}>
+              <Link
+                to="/calendar"
+                style={{ color: 'white', textDecoration: 'none' }}
+              >
+                calendar
+              </Link>
+            </span>
+          </div>
           <canvas
             id="canvas"
             width={Math.min(document.body.clientWidth, 600)}
-            height="1000"
+            height={Math.min(document.body.clientWidth, 750)}
             style={{ backgroundColor: 'transparent' }}
           ></canvas>
         </div>
